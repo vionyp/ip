@@ -1,3 +1,5 @@
+import java.util.Scanner;
+
 public class Nivi {
     public static void main(String[] args) {
         String logo = " _   _  _____ __      __ _____\n"
@@ -14,7 +16,19 @@ public class Nivi {
         System.out.println(" What can I do for you?");
         System.out.println("____________________________________________________________");
 
-        System.out.println(" Bye. Hope to see you again soon!");
-        System.out.println("____________________________________________________________");
+        Scanner in = new Scanner(System.in);
+        while (true){
+            String word = in.nextLine();
+            if (word.equalsIgnoreCase("bye")) {
+                System.out.println("____________________________________________________________");
+                System.out.println(" Bye. See you soon little kid!");
+                System.out.println("____________________________________________________________");
+                break;
+            }else{
+                System.out.println("____________________________________________________________");
+                System.out.println(word);
+                System.out.println("____________________________________________________________");
+            }
+        }
     }
 }
