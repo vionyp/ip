@@ -2,6 +2,9 @@ import java.util.Scanner;
 
 public class Nivi {
     public static void main(String[] args) {
+        Task[] tasks = new Task[100];
+        int taskCount = 0;
+
         String logo = " _   _  _____ __      __ _____\n"
                 + "| \\ | ||_   _|\\ \\    / /|_   _|\n"
                 + "|  \\| |  | |   \\ \\  / /   | |  \n"
@@ -16,19 +19,35 @@ public class Nivi {
         System.out.println(" What can I do for you?");
         System.out.println("____________________________________________________________");
 
-        Scanner in = new Scanner(System.in);
+        Scanner inStr = new Scanner(System.in);
         while (true){
-            String word = in.nextLine();
-            if (word.equalsIgnoreCase("bye")) {
+            String word = inStr.nextLine();
+            String lowerWord = word.toLowerCase();
+
+            if (lowerWord.contains("bye")) {
                 System.out.println("____________________________________________________________");
-                System.out.println(" Bye. See you soon little kid!");
+                System.out.println(" Bye. See you soon little kid! Love u");
                 System.out.println("____________________________________________________________");
                 break;
-            }else{
+            }else if (lowerWord.equals("list")) {
                 System.out.println("____________________________________________________________");
-                System.out.println(word);
+                for (int i = 0; i < taskCount; i++) {
+                    // Menampilkan nomor dan deskripsi dari class Task
+                    System.out.println((i + 1) + ". " + tasks[i].getDescription());
+                }
+                System.out.println("____________________________________________________________");
+            }else {
+                System.out.println("____________________________________________________________");
+                if (taskCount < 100) {
+                    tasks[taskCount] = new Task(word);
+                    taskCount++;
+                    System.out.println(" added: " + word);
+                } else {
+                    System.out.println(" Sorry, the list is full!");
+                }
                 System.out.println("____________________________________________________________");
             }
         }
+        inStr.close();
     }
 }
