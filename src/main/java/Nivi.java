@@ -1,3 +1,4 @@
+
 import java.util.Scanner;
 
 public class Nivi {
@@ -30,13 +31,50 @@ public class Nivi {
                 System.out.println("____________________________________________________________");
                 break;
             } else if (lowerWord.equals("list")) {
+                if (taskCount == 0){
+                    System.out.println("The list is still empty");
+                    continue;
+                }
                 System.out.println("____________________________________________________________");
                 System.out.println("Here are all the task you have added:");
                 for (int i = 0; i < taskCount; i++) {
                     // Menampilkan nomor dan deskripsi dari class Task
-                    System.out.println((i + 1) + ". " + "[" + tasks[i].getStatusIcon() + "]" + tasks[i].getDescription());
+                    System.out.println((i+1)+". "+tasks[i]);
                 }
                 System.out.println("____________________________________________________________");
+            }else if(lowerWord.startsWith("todo")||lowerWord.startsWith("deadline")||lowerWord.startsWith("event")){
+                if (taskCount < 100) {
+                    if (lowerWord.startsWith("todo")) {
+                        // the activity without deadline
+                        String activity = word.substring(5).trim(); // Get everything after "todo "
+                        tasks[taskCount] = new Todo(activity);
+                    } else if (lowerWord.startsWith("deadline")) {
+                        // the activity with deadline
+                        String description = word.substring(9).trim(); // Get everything after "deadline "
+                        String[] parts = description.split(" /by ");
+                        String activity = parts[0];
+                        String by = parts[1];
+                        tasks[taskCount] = new Deadline(activity, by);
+                    } else if (lowerWord.startsWith("event")) {
+                        // the activity with start and end time
+                        String description = word.substring(6).trim(); // Get everything after "event "
+                        String[] partsByFrom = description.split(" /from ");
+                        String activity = partsByFrom[0];
+                        String[] partsByTo = partsByFrom[1].split(" /to ");
+                        String from = partsByTo[0];
+                        String to = partsByTo[1];
+                        tasks[taskCount] = new Event(activity, from, to);
+                    }
+                    System.out.println("____________________________________________________________");
+                    System.out.println("Got it. I've added this task:");
+                    System.out.println(tasks[taskCount]);
+                    taskCount++;
+                    System.out.println("Now you have "+taskCount+" in the list.");
+                    System.out.println("____________________________________________________________");
+
+                } else {
+                    System.out.println(" Sorry, the list is full!");
+                }
             }else if(lowerWord.startsWith("mark")){
                 int taskIndex = Integer.parseInt(lowerWord.substring(5).trim())-1; // since mark is until index 3 then there will be a spece in index 4. Thus the index will bee on index 5
                 if (taskIndex>=taskCount){
@@ -66,13 +104,7 @@ public class Nivi {
                 System.out.println("____________________________________________________________");
             }else {
                 System.out.println("____________________________________________________________");
-                if (taskCount < 100) {
-                    tasks[taskCount] = new Task(word);
-                    taskCount++;
-                    System.out.println(" added: " + word);
-                } else {
-                    System.out.println(" Sorry, the list is full!");
-                }
+                System.out.println("Please give a specific comment!! is it todo/deadline/event. Thank you!!");
                 System.out.println("____________________________________________________________");
             }
         }
