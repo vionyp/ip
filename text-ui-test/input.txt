@@ -1,0 +1,13 @@
+list
+todo read book
+deadline submit project /by Wednesday 11pm
+event career fair /from Friday 10am /to 4pm
+list
+mark 1
+mark 2
+unmark 1
+list
+todo sleep
+mark 10
+random input
+bye
