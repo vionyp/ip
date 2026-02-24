@@ -1,26 +1,20 @@
+import task.Task;
+import task.Todo;
+import task.Deadline;
+import task.Event;
+
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Nivi {
     // simplify the code that have repetitions like the line divider
-    private static final int maximumTaskCapacity = 100;
     private static final String lineDivider = "____________________________________________________________";
 
     public static void main(String[] args) {
-        Task[] taskList = new Task[maximumTaskCapacity];
-        int totalTaskCount = 0;
+        // the collection 
+        ArrayList<Task> taskList = new ArrayList<>(); // the collection, turns out i have already used arraylist after my code revision in the previous commit
 
-        String niviLogo = " _   _  _____ __      __ _____\n"
-                + "| \\ | ||_   _|\\ \\    / /|_   _|\n"
-                + "|  \\| |  | |   \\ \\  / /   | |  \n"
-                + "| . ` |  | |    \\ \\/ /    | |  \n"
-                + "| |\\  | _| |_    \\  /    _| |_ \n"
-                + "|_| \\_||_____|    \\/    |_____|\n";
-
-        System.out.println("Hello from\n" + niviLogo);
-        printDivider();
-        System.out.println(" Hello! I'm NIVI");
-        System.out.println(" What can I do for you , little kid?");
-        printDivider();
+        printStart();
 
         Scanner userInputScanner = new Scanner(System.in);
         while (true) {
@@ -29,135 +23,142 @@ public class Nivi {
                 String lowercaseUserInput = userInput.toLowerCase();
 
                 if (lowercaseUserInput.contains("bye")) {
-                    printDivider();
-                    System.out.println(" Bye. See you soon little kid! Love u");
-                    printDivider();
+                    printMessageInsideLine(" Bye. See you soon little kid! Love u");
                     break;
                 }
 
-                if (lowercaseUserInput.equals("list")) {
-                    handleListCommand(taskList, totalTaskCount);
+                else if (lowercaseUserInput.equals("list")) {
+                    handleListCommand(taskList);
+                }
+
+                else if (lowercaseUserInput.startsWith("mark")) {
+                    handleMarkCommand(taskList, lowercaseUserInput);
+                }
+
+                else if (lowercaseUserInput.startsWith("unmark")) {
+                    handleUnmarkCommand(taskList, lowercaseUserInput);
+                }
+
+                else if (lowercaseUserInput.startsWith("delete")) {
+                    handleDeleteCommand(taskList, lowercaseUserInput);
+                }
+
+                else if (lowercaseUserInput.startsWith("todo") || lowercaseUserInput.startsWith("deadline") || lowercaseUserInput.startsWith("event")) {
+                    handleAddTask(taskList, userInput, lowercaseUserInput);
                     continue;
                 }
 
-                if (lowercaseUserInput.startsWith("mark ")) {
-                    handleMarkCommand(taskList, totalTaskCount, lowercaseUserInput);
-                    continue;
-                }
-
-                if (lowercaseUserInput.startsWith("unmark ")) {
-                    handleUnmarkCommand(taskList, totalTaskCount, lowercaseUserInput);
-                    continue;
-                }
-
-                if (lowercaseUserInput.startsWith("todo") || lowercaseUserInput.startsWith("deadline") 
-                        || lowercaseUserInput.startsWith("event")) {
-                    totalTaskCount = handleAddTask(taskList, totalTaskCount, userInput, lowercaseUserInput);
-                    continue;
-                }
-
-                throw new NiviException("Little kid, You are required to give a specific command: todo/deadline/event/list/mark/unmark/bye");
+                else 
+                    throw new NiviException("Little kid, You are required to give a specific command: todo/deadline/event/list/mark/unmark/bye");
 
             } catch (NiviException niviError) {
-                printDivider();
-                System.out.println(" " + niviError.getMessage());
-                printDivider();
+                printMessageInsideLine(" " + niviError.getMessage());
             } catch (Exception unexpectedError) {
-                printDivider();
-                System.out.println(" Error: " + unexpectedError.getMessage());
-                printDivider();
+                printMessageInsideLine(" Error: " + unexpectedError.getMessage());
             }
         }
         userInputScanner.close();
     }
 
-    private static void handleListCommand(Task[] taskList, int totalTaskCount) throws NiviException {
-        if (totalTaskCount == 0) {
+    // avoid long methods and deep nesting because of the if else
+    // so every if else will call another function below
+    private static void handleListCommand(ArrayList<Task> taskList) throws NiviException {
+        if (taskList.isEmpty()) {
             throw new NiviException("The list is still empty");
         }
 
-        printDivider();
-        System.out.println(" Here are the tasks in your list:");
-        for (int currentTaskPosition = 0; currentTaskPosition < totalTaskCount; currentTaskPosition++) {
-            System.out.println(" " + (currentTaskPosition + 1) + "." + taskList[currentTaskPosition]);
+        String message = " Here are the tasks in your list:\n";
+        for (int currentTaskPosition = 0; currentTaskPosition < taskList.size(); currentTaskPosition++) {
+            message += " " + (currentTaskPosition + 1) + "." + taskList.get(currentTaskPosition) + "\n";
         }
-        printDivider();
-
+        printMessageInsideLine(message);
     }
 
-    private static void handleMarkCommand(Task[] taskList, int totalTaskCount, 
+    private static void handleMarkCommand(ArrayList<Task> taskList, 
             String lowercaseUserInput) throws NiviException {
         try {
-            String taskNumberString = lowercaseUserInput.substring(5).trim();
-            int userProvidedTaskNumber = Integer.parseInt(taskNumberString);
-
+            String trimmed = lowercaseUserInput.trim();
+            if (trimmed.equals("mark")) {
+                throw new NiviException("You need to specify which task to mark first, where is ur number!");
+            }
+            int userProvidedTaskNumber = Integer.parseInt(trimmed.substring(5));
             int arrayIndexOfTask = userProvidedTaskNumber - 1;
 
-            if (arrayIndexOfTask >= totalTaskCount || arrayIndexOfTask < 0) {
+            if (arrayIndexOfTask >= taskList.size() || arrayIndexOfTask < 0) {
                 throw new NiviException("Invalid task number!");
             }
 
-            taskList[arrayIndexOfTask].markAsDone();
-            printDivider();
-            System.out.println(" Nice! I've marked this task as done:");
-            System.out.println("   " + taskList[arrayIndexOfTask]);
-            printDivider();
+            taskList.get(arrayIndexOfTask).markAsDone();
+            printMessageInsideLine(" Nice! I've marked this task as done:\n" + "   " + taskList.get(arrayIndexOfTask));
         } catch (NumberFormatException invalidNumberError) {
             throw new NiviException("The task number not valid, give the correct one!");
-        } catch (StringIndexOutOfBoundsException missingNumberError) {
-            throw new NiviException("You need to specify which task to mark first, where is ur number!");
         }
     }
 
-    private static void handleUnmarkCommand(Task[] taskList, int totalTaskCount, 
+    private static void handleUnmarkCommand(ArrayList<Task> taskList, 
             String lowercaseUserInput) throws NiviException {
         try {
-            String taskNumberString = lowercaseUserInput.substring(7).trim();
-            int userProvidedTaskNumber = Integer.parseInt(taskNumberString);
+            String trimmed = lowercaseUserInput.trim();
+            if (trimmed.equals("unmark")) {
+                throw new NiviException("You need to specify which task to unmark first, where is ur number!");
+            }
+            int userProvidedTaskNumber = Integer.parseInt(trimmed.substring(7));
             int arrayIndexOfTask = userProvidedTaskNumber - 1;
 
-            if (arrayIndexOfTask >= totalTaskCount || arrayIndexOfTask < 0) {
+            if (arrayIndexOfTask >= taskList.size() || arrayIndexOfTask < 0) {
                 throw new NiviException("Invalid task number!");
             }
 
-            if (!taskList[arrayIndexOfTask].isDone) {
+            if (!taskList.get(arrayIndexOfTask).getIsDone()) {
                 throw new NiviException("Havent do but want to unmark Aiyaaa!");
             }
 
-            taskList[arrayIndexOfTask].markAsUndone();
-            printDivider();
-            System.out.println(" OK, I've marked this task as not done yet:");
-            System.out.println("   " + taskList[arrayIndexOfTask]);
-            printDivider();
+            taskList.get(arrayIndexOfTask).markAsUndone();
+            printMessageInsideLine(" OK, I've marked this task as not done yet:\n" + "   " + taskList.get(arrayIndexOfTask));
         } catch (NumberFormatException invalidNumberError) {
             throw new NiviException("Invalid task number, provide the correct one !!!");
-        } catch (StringIndexOutOfBoundsException missingNumberError) {
-            throw new NiviException("Which one u want to unmark, never say the number? Haiya!!!");
+        } 
+    }
+
+    private static void handleDeleteCommand(ArrayList<Task> taskList,
+            String lowercaseUserInput) throws NiviException {
+        try {
+            String trimmed = lowercaseUserInput.trim();
+            if (trimmed.equals("delete")) {
+                throw new NiviException("You need to specify which task to delete!, Aiyaaa cannot just delete delete like that!");
+            }
+            int userProvidedTaskNumber = Integer.parseInt(trimmed.substring(7));
+            int arrayIndexOfTask = userProvidedTaskNumber - 1;
+
+            if (arrayIndexOfTask >= taskList.size() || arrayIndexOfTask < 0) {
+                throw new NiviException("Invalid task number!");
+            }
+
+            Task deletedTask = taskList.get(arrayIndexOfTask);
+            taskList.remove(arrayIndexOfTask);
+
+            printMessageInsideLine(" Okk. I've deleted this task, yaaa:\n" + "   " + deletedTask + "\n" +
+                " Now you have " + taskList.size() + " tasks in the list.");
+        } catch (NumberFormatException invalidNumberError) {
+            throw new NiviException("Invalid task number, u need to input the correct one eiiii!");
         }
     }
 
-    private static int handleAddTask(Task[] taskList, int totalTaskCount, 
+    private static void handleAddTask(ArrayList<Task> taskList,
             String userInput, String lowercaseUserInput) throws NiviException {
-        if (totalTaskCount >= maximumTaskCapacity) {
-            throw new NiviException("Sorry, the list is full!");
-        }
-
+        
+        Task newTask = null;
         if (lowercaseUserInput.startsWith("todo")) {
-            taskList[totalTaskCount] = createTodoTask(userInput);
+            newTask = createTodoTask(userInput);
         } else if (lowercaseUserInput.startsWith("deadline")) {
-            taskList[totalTaskCount] = createDeadlineTask(userInput);
+            newTask = createDeadlineTask(userInput);
         } else if (lowercaseUserInput.startsWith("event")) {
-            taskList[totalTaskCount] = createEventTask(userInput);
+            newTask = createEventTask(userInput);
         }
 
-        printDivider();
-        System.out.println("Got it. I've added this task:");
-        System.out.println("   " + taskList[totalTaskCount]);
-        totalTaskCount++;
-        System.out.println("OKOK Now you have " + totalTaskCount + " tasks in the list.");
-        printDivider();
+        taskList.add(newTask);
+        printMessageInsideLine(" Got it. I've added this task:\n" + "   " + newTask + "\n" + " Now you have " + taskList.size() + " tasks in the list.");
 
-        return totalTaskCount;
     }
 
     private static Task createTodoTask(String userInput) throws NiviException {
@@ -224,7 +225,29 @@ public class Nivi {
         }
     }
 
-    private static void printDivider() {
+    public static void printStart(){
+        String niviLogo = " _   _  _____ __      __ _____\n"
+                + "| \\ | ||_   _|\\ \\    / /|_   _|\n"
+                + "|  \\| |  | |   \\ \\  / /   | |  \n"
+                + "| . ` |  | |    \\ \\/ /    | |  \n"
+                + "| |\\  | _| |_    \\  /    _| |_ \n"
+                + "|_| \\_||_____|    \\/    |_____|\n";
+
+        System.out.println("Hello from\n" + niviLogo);
+        printMessageInsideLine(" Hello! I'm NIVI\n" +
+            " What can I do for you , little kid?"
+        );
+    }
+
+    private static void printMessageInsideLine(String message){
         System.out.println(lineDivider);
+        System.out.println(message);
+        System.out.println(lineDivider);
+    }
+}
+
+class NiviException extends Exception {
+    public NiviException(String message) {
+        super(message);
     }
 }
