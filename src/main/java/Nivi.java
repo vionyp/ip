@@ -11,6 +11,7 @@ public class Nivi {
     private static final String lineDivider = "____________________________________________________________";
 
     public static void main(String[] args) {
+        // the collection 
         ArrayList<Task> taskList = new ArrayList<>(); // the collection, turns out i have already used arraylist after my code revision in the previous commit
 
         printStart();
