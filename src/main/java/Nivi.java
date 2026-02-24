@@ -3,20 +3,32 @@ import task.Todo;
 import task.Deadline;
 import task.Event;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+
 public class Nivi {
-    // simplify the code that have repetitions like the line divider
+    private static final String FILE_PATH = "./data/nivi.txt";
+    private static Storage storage = new Storage(FILE_PATH);
+    private static ArrayList<Task> taskList = new ArrayList<>();
+    
     private static final String lineDivider = "____________________________________________________________";
 
+    private static Scanner userInputScanner = new Scanner(System.in);
     public static void main(String[] args) {
-        // the collection 
-        ArrayList<Task> taskList = new ArrayList<>(); // the collection, turns out i have already used arraylist after my code revision in the previous commit
-
+        // Loading the data from file
+        try {
+            taskList = storage.load();
+        } catch (FileNotFoundException e) {
+            taskList = new ArrayList<>();
+        } catch (Exception e) {
+            System.out.println(" Error loading file: " + e.getMessage());
+            taskList = new ArrayList<>();
+        }
         printStart();
 
-        Scanner userInputScanner = new Scanner(System.in);
         while (true) {
             try {
                 String userInput = userInputScanner.nextLine();
@@ -47,11 +59,12 @@ public class Nivi {
 
                 else if (lowercaseUserInput.startsWith("todo") || lowercaseUserInput.startsWith("deadline") || lowercaseUserInput.startsWith("event")) {
                     handleAddTask(taskList, userInput, lowercaseUserInput);
-                    continue;
                 }
-
-                else 
+                else {
                     throw new NiviException("Little kid, You are required to give a specific command: todo/deadline/event/list/mark/unmark/bye");
+                }  
+        
+                saveData();
 
             } catch (NiviException niviError) {
                 printMessageInsideLine(" " + niviError.getMessage());
@@ -62,8 +75,16 @@ public class Nivi {
         userInputScanner.close();
     }
 
-    // avoid long methods and deep nesting because of the if else
-    // so every if else will call another function below
+
+    private static void saveData() {
+        try {
+            storage.save(taskList);
+        } catch (IOException e) {
+            System.out.println(" Sorry kid, you fail to save the file!");
+        }
+    }
+    // Avoid long methods and deep nesting because of the if else
+    // So every if else will call another function below
     private static void handleListCommand(ArrayList<Task> taskList) throws NiviException {
         if (taskList.isEmpty()) {
             throw new NiviException("The list is still empty");
