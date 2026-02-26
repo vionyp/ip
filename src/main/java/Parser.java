@@ -3,6 +3,8 @@ import task.Todo;
 import task.Deadline;
 import task.Event;
 
+import java.time.format.DateTimeParseException;
+
 public class Parser {
 
     public static Task parseTodo(String userInput) throws NiviException {
@@ -31,6 +33,8 @@ public class Parser {
             return new Deadline(description, by);
         } catch (ArrayIndexOutOfBoundsException e) {
             throw new NiviException("This format is wrong bro the correct one is -->>> deadline <description> /by <time>");
+        } catch (DateTimeParseException e) {
+            throw new NiviException("Aiyo the date format is wrong bro. Try use YYYY-MM-DD, 2019-12-02 liddat");
         }
     }
 
