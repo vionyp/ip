@@ -1,5 +1,3 @@
-package main.java;
-
 import task.Task;
 import task.Todo;
 import task.Deadline;

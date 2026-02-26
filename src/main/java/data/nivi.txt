@@ -1,3 +1,4 @@
-T | 0 | makan
-T | X | minum
-E | 0 | jogging | 5 | 30
+T | X | eat breakfast
+E | 0 | eat lunch | 12 | 2
+D | 0 | dinner | 10
+T | 0 | clean something
