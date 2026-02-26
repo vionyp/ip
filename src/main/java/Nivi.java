@@ -2,6 +2,8 @@ import task.Task;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+
 
 
 public class Nivi {
@@ -46,6 +48,10 @@ public class Nivi {
 
                 else if (lower.startsWith("delete")) {
                     handleDelete(lower);
+                }
+
+                else if (lower.startsWith("find")) {
+                    handleFind(lower);
                 }
 
                 else if (lower.startsWith("todo") || lower.startsWith("deadline") || lower.startsWith("event")) {
@@ -154,6 +160,23 @@ public class Nivi {
 
         taskList.add(newTask);
         ui.printMessage(" Got it. I've added this task:\n   " + newTask + "\n Now you have " + taskList.size() + " tasks in the list.");
+    }
+
+    private static void handleFind(String lower) throws NiviException {
+        String trimmed = lower.trim();
+        if (trimmed.equals("find")) {
+            throw new NiviException("Ei what do you want to find? Give me keyword lahhh, u think i can guess liddat?!");
+        }
+        String keyword = trimmed.substring(5).trim();
+        ArrayList<Task> matchingTasks = taskList.findTasks(keyword);
+        if (matchingTasks.isEmpty()) {
+            throw new NiviException("Got nothing liddat eh!");
+        }
+        String message = " Matched things I can find:\n";
+        for (int i = 0; i < matchingTasks.size(); i++) {
+            message += " " + (i + 1) + "." + matchingTasks.get(i) + "\n";
+        }
+        ui.printMessage(message);
     }
 }
 

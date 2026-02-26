@@ -1,2 +1,4 @@
 D | 0 | poster | 2026-12-12
 T | 0 | drink water
+T | 0 | read books
+E | 0 | book rent | Monday | Saturday
