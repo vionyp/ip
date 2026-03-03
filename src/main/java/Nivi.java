@@ -5,12 +5,23 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 
-
+/**
+ * Nivi class is a task management chatbot that helps users keep track of their tasks and deadlines. It allows users to add, delete, mark, unmark,and find listed activities, as well as save and load their task list from a file.
+ */
 public class Nivi {
     private static final String FILE_PATH = "./data/nivi.txt";
     private static Storage storage = new Storage(FILE_PATH);
     private static TaskList taskList;
     private static Ui ui = new Ui();
+
+    /**
+     * The main method in Nivi file is the program threshold, where the program starts and ends.
+     * <p>
+     * The main method will start by loading the existing data from the file, and then enter a loop to restructure and save the user input while handling the exceptions that may occur. Users will only exit the loop when they input "bye", which will trigger the program to save the data and print the goodbye message before closing the program.
+     * @param userInput the input command by the user, which will be processed and executed by the program. The command can be one of the following: todo/deadline/event/list/mark/unmark/delete/find/bye
+     * @throws NiviException when the user input is invalid or does not follow the expected format, such as, missing description, invalid task number for mark/unmark/delete, or incorrect date format.
+     * @throws IOException when there is an error while saving the data to the file, such as, the file being inaccessible or the disk being full.
+     */
     public static void main(String[] args) {
         try {
             taskList = new TaskList(storage.load());
@@ -179,7 +190,9 @@ public class Nivi {
         ui.printMessage(message);
     }
 }
-
+/**
+ * NiviException is used to handle exceptions that may occur in Nivi program, such as invalid user input or errors while saving/loading data. It extends the Exception class and provides a constructor that takes a message parameter to print the error message.
+ */
 class NiviException extends Exception {
     public NiviException(String message) {
         super(message);

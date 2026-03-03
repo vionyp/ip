@@ -5,8 +5,20 @@ import task.Event;
 
 import java.time.format.DateTimeParseException;
 
+/**
+ * Parser class allow user to convert the user input into Task datatype, which can be added into the task list. There are 3 methods in this class, which are parseTodo, parseDeadline, and parseEvent. Each method is responsible for parsing the user input for the corresponding task type and returning a Task object. If the user input is invalid or does not follow the expected format, the methods will throw a NiviException with a specified error message to guide user to correct the input.
+ * 
+ */
 public class Parser {
 
+    /**
+     * Parse the user input for a todo task and return a Todo object. 
+     * <p>
+     * Format : "todo" followed by the description of the task. The description cannot be empty.
+     * @param userInput inputed String that starts with "todo".
+     * @return a Todo object with the extracted description from the user input.
+     * @throws NiviException when the description of the todo task is empty or invalid.
+     */
     public static Task parseTodo(String userInput) throws NiviException {
         String description = userInput.substring(5).trim();
         if (description.isEmpty()) {
@@ -15,6 +27,14 @@ public class Parser {
         return new Todo(description);
     }
 
+    /**
+     * Parse the user input for a deadline task and return a Deadline object.
+     * <p>
+     * Format : "deadline" followed by the description of the task, then "/by" and time deadline.
+     * @param userInput inputed String that starts with "deadline" and contains the description and deadline time.
+     * @return a Deadline object with the extracted description and deadline time from the user input.
+     * @throws NiviException when the description or deadline time is empty or invalid, or does not contain "/by".
+     */
     public static Task parseDeadline(String userInput) throws NiviException {
         try {
             String full = userInput.substring(9).trim();
@@ -38,6 +58,14 @@ public class Parser {
         }
     }
 
+    /**
+     * Parse the user input for an event task and return an Event object.
+     * <p>
+     * Format : "event" followed by the description of the task, then "/from" and start time, then "/to" and finish time.
+     * @param userInput inputed String that starts with "event" and contains the description, start time, and finish time.
+     * @return an Event object with the extracted description, start time, and finish time from the user input.
+     * @throws NiviException when the description, start time, or finish time is empty or invalid, or does not contain "/from" and "/to".
+     */
     public static Task parseEvent(String userInput) throws NiviException {
         try {
             String full = userInput.substring(6).trim();

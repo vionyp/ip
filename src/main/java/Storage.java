@@ -11,15 +11,25 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
- * This file purpose is to simplify handling the operation of reading and writing in  the * harddisk
+ * Strogage class load and save the task list to a file.
  */
 public class Storage {
     private String filePath;
 
+    /**
+     * Constructor, initialize the Storage object with a file path.
+     * @param filePath path of the file where tasks are stored.
+     */
     public Storage(String filePath) {
         this.filePath = filePath;
     }
 
+    /**
+     * Load the task list from internal file and return it as an ArrayList of Task objects. If the file does not exist, a FileNotFoundException will be thrown.
+     * @return an ArrayList of loaded Task objects from file.
+     * @throws FileNotFoundException when the specified file path does not exist.
+     * @throws IOException when the file is error or inaccesible.
+     */
     public ArrayList<Task> load() throws FileNotFoundException {
         File file = new File(filePath);
         if (!file.exists()) {
@@ -40,6 +50,10 @@ public class Storage {
         return loadedTasks;
     }
 
+    /**
+     * Save the task list to the internal file. If the file does not exist yet, it will be created.
+     * @throws IOException when the file being inaccessible or the disk being full.
+     */
     public void save(ArrayList<Task> tasks) throws IOException {
         File f = new File(filePath);
         
@@ -53,12 +67,7 @@ public class Storage {
         }
         fw.close();
     }
-
     
-
-    /**
-     * Helper method to convert the line from the file back into Task datatype.
-     */
     private Task parseLineToTask(String line) {
         String[] parts = line.split(" \\| ");
         String type = parts[0];
