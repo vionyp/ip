@@ -18,7 +18,6 @@ public class Nivi {
      * The main method in Nivi file is the program threshold, where the program starts and ends.
      * <p>
      * The main method will start by loading the existing data from the file, and then enter a loop to restructure and save the user input while handling the exceptions that may occur. Users will only exit the loop when they input "bye", which will trigger the program to save the data and print the goodbye message before closing the program.
-     * @param userInput the input command by the user, which will be processed and executed by the program. The command can be one of the following: todo/deadline/event/list/mark/unmark/delete/find/bye
      * @throws NiviException when the user input is invalid or does not follow the expected format, such as, missing description, invalid task number for mark/unmark/delete, or incorrect date format.
      * @throws IOException when there is an error while saving the data to the file, such as, the file being inaccessible or the disk being full.
      */
