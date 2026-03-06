@@ -197,4 +197,3 @@ class NiviException extends Exception {
         super(message);
     }
 }
-// this line is for merge PR purposes
